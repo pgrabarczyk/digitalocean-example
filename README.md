@@ -9,6 +9,7 @@
 ```bash
 # https://github.com/tfutils/tfenv
 tfenv install
+terrafom version
 ```
 
 ```bash
@@ -18,9 +19,36 @@ doctl auth switch --context <NAME>
 doctl account get
 ```
 
+```bash
+DIGITALOCEAN_ACCESS_TOKEN=$(cat $HOME/.config/doctl/config.yaml | grep "private:" | cut -d' ' -f4)
+export DIGITALOCEAN_ACCESS_TOKEN=$DIGITALOCEAN_ACCESS_TOKEN
+```
+
+```bash
+ssh-keygen -t rsa -C "your_email@example.com" -f ./service_key_do
+# This should generate service_key_do & service_key_do.pub
+```
+
 ## Run
 
-TODO
+```bash
+# cd infra/envs/dev/
+terraform init
+terraform plan -var "do_token=$DIGITALOCEAN_ACCESS_TOKEN" -out ".terraform.plan.out"
+terraform apply ".terraform.plan.out"
+```
+
+```bash
+# SSH into new machine
+IP_ADDRESS=$(terraform output | cut -d'"' -f2)
+ssh $IP_ADDRESS
+ssh terraform@$IP_ADDRESS -i ../../../service_key_do
+```
+
+```bash
+# Destroy
+terraform destroy -var "do_token=$DIGITALOCEAN_ACCESS_TOKEN"
+```
 
 ## Helpful links:
 https://learn.hashicorp.com/tutorials/terraform/digitalocean-provider?in=terraform/applications
