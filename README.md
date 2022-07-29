@@ -64,3 +64,9 @@ https://www.w3schools.com/w3css/w3css_templates.asp
 https://docs.digitalocean.com/reference/doctl/reference/compute/region/list/
 
 
+## TODO
+* Setup LoadBalancer
+* Hide droplets into private network
+* Setup DNS for LoadBalancer
+* Draw diagram
+* Setup DB and connect services with DB via private networks
