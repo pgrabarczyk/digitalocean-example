@@ -27,14 +27,15 @@ export DIGITALOCEAN_ACCESS_TOKEN=$DIGITALOCEAN_ACCESS_TOKEN
 ```bash
  
 # Below should generate service_key_do & service_key_do.pub
-ssh-keygen -t rsa -C "your_email@example.com" -f ./service_key_do 
+ssh-keygen -t rsa -C "your_email@example.com" -f "./service_key_do"
 
 # Load public key to DO
-doctl compute ssh-key import service_key_do --public-key-file service_key_do.pub
+doctl compute ssh-key import "service_key_do" --public-key-file "service_key_do.pub"
 ```
 
 ## Run
 
+#### Create infra
 ```bash
 # cd infra/envs/dev/
 terraform init
@@ -42,15 +43,17 @@ terraform plan -var "do_token=$DIGITALOCEAN_ACCESS_TOKEN" -out ".terraform.plan.
 terraform apply ".terraform.plan.out"
 ```
 
+#### SSH into ubuntu droplet
 ```bash
-# Apache2 & SSH server may be down up to 5 minutes before logging
 # SSH into new machine
 IP_ADDRESS=$(terraform output | cut -d'"' -f2)
-ssh terraform@$IP_ADDRESS -i ../../../service_key_do
+ssh terraform@$IP_ADDRESS -i "../../../service_key_do"
+
+# Note. Apache2 server may be down / configuring for ~3minutes after terraform apply
 ```
 
+#### Destroy infra
 ```bash
-# Destroy
 terraform destroy -var "do_token=$DIGITALOCEAN_ACCESS_TOKEN"
 ```
 
