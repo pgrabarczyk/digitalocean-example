@@ -25,8 +25,12 @@ export DIGITALOCEAN_ACCESS_TOKEN=$DIGITALOCEAN_ACCESS_TOKEN
 ```
 
 ```bash
-ssh-keygen -t rsa -C "your_email@example.com" -f ./service_key_do
-# This should generate service_key_do & service_key_do.pub
+ 
+# Below should generate service_key_do & service_key_do.pub
+ssh-keygen -t rsa -C "your_email@example.com" -f ./service_key_do 
+
+# Load public key to DO
+doctl compute ssh-key import service_key_do --public-key-file service_key_do.pub
 ```
 
 ## Run
@@ -39,9 +43,9 @@ terraform apply ".terraform.plan.out"
 ```
 
 ```bash
+# Apache2 & SSH server may be down up to 5 minutes before logging
 # SSH into new machine
 IP_ADDRESS=$(terraform output | cut -d'"' -f2)
-ssh $IP_ADDRESS
 ssh terraform@$IP_ADDRESS -i ../../../service_key_do
 ```
 
